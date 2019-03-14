@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Providers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+
+        Validator::extend('image64', function ($attribute, $value, $parameters, $validator) {
+            $type = explode('/', explode(':', substr($value, 0, strpos($value, ';')))[1])[1];
+            if (in_array($type, $parameters)) {
+                return true;
+            }
+            return false;
+        });
+
+        Validator::extend('phone_number', function ($attribute,$value,$parameters, $validator) {
+           return substr($value, 0, 2) == '01';
+        });
+
+        Validator::replacer('image64', function($message, $attribute, $rule, $parameters) {
+            return str_replace(':values',join(",",$parameters),$message);
+        });
+
+
+
+
+
+        Schema::defaultStringLength(191);
+     
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
+}
